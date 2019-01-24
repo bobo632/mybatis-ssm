@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                               http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+                               	http://www.springframework.org/schema/context
+                               		http://www.springframework.org/schema/context/spring-context.xsd
+                               	http://www.springframework.org/schema/aop
+       					    http://www.springframework.org/schema/aop/spring-aop.xsd">
+    <context:annotation-config/>
+   <context:property-placeholder location="classpath:jdbc.properties"/>
+    <bean id="datasource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="${jdbc.driver}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="datasource"/>
+        <property name="configLocation" value="classpath:SqlMapConfig.xml"/>
+        <property name="typeAliasesPackage" value="com.sunyx.domain"/>
+        <property name="mapperLocations" value="classpath:com/sunyx/mapper/*.xml"/>
+    </bean>
+
+    <bean id="empDao" class="com.sunyx.dao.impl.EmpDaoImpl">
+        <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+    </bean>
+<!--    <bean id="empMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="com.sunyx.mapper.EmpMapper"/>
+        <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+    </bean>-->
+
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.sunyx.mapper"/>
+    </bean>
+
+
+</beans>
